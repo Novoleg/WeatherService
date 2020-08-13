@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    <section class="hero is-primary">
+    <section class="hero is-info is-bold">
         <div class="hero-body">
             <div class="container">
                 <h1 class="title">
@@ -29,11 +29,23 @@
                                 <input class="input" name="city" type="text" placeholder="Имя города">
                             </div>
                             <div class="control">
-                                <button class="button is-info">
+                                <button class="button is-primary">
                                     Добавить город
                                 </button>
                             </div>
                         </div>
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                {% set message_class = 'is-success' %}
+
+                                {% if category == 'error' %}
+                                    {% set message_class = 'is-danger' %}
+                                {% endif %}
+                                <div class="notification {{ message_class }}">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                        {% endwith %}
                     </form>
                 </div>
             </div>
@@ -43,6 +55,7 @@
         <div class="container">
             <div class="columns">
                 <div class="column is-offset-4 is-4">
+                    {% for weather in weather_data %}
                     <div class="box">
                         <article class="media">
                             <div class="media-left">
@@ -53,15 +66,22 @@
                             <div class="media-content">
                                 <div class="content">
                                     <p>
-                                        <span class="title">{{weather.city}}</span>
+                                        <span class="title">{{ weather.city }}</span>
                                         <br>
-                                        <span class="subtitle">{{weather.temperature}}° C</span>
+                                        <span class="subtitle">{{ weather.temperature }}° С</span>
                                         <br> {{ weather.description }}
+                                        <br> <strong>{{weather.recommendation}}</strong>
                                     </p>
                                 </div>
                             </div>
+                            <div class="media-right">
+                                <a href="{{ url_for('delete_city', name=weather.city) }}">
+                                    <button class="delete"></button>
+                                </a>
+                            </div>
                         </article>
                     </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
